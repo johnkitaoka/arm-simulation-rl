@@ -1,0 +1,87 @@
+# Robot Arm Configuration
+robot_arm:
+  # Base configuration
+  base_position: [0.0, 0.0, 0.0]
+  base_orientation: [0.0, 0.0, 0.0, 1.0]  # quaternion (x, y, z, w)
+  
+  # Joint limits (in radians)
+  joint_limits:
+    shoulder_pitch: [-1.57, 1.57]    # -90 to 90 degrees
+    shoulder_yaw: [-3.14, 3.14]      # -180 to 180 degrees
+    shoulder_roll: [-1.57, 1.57]     # -90 to 90 degrees
+    elbow_flexion: [0.0, 2.35]       # 0 to 135 degrees
+    wrist_pitch: [-1.57, 1.57]       # -90 to 90 degrees
+    wrist_yaw: [-1.57, 1.57]         # -90 to 90 degrees
+    
+    # Finger joints (each finger has 3 joints)
+    finger_metacarpal: [0.0, 1.57]   # 0 to 90 degrees
+    finger_proximal: [0.0, 1.57]     # 0 to 90 degrees
+    finger_distal: [0.0, 1.57]       # 0 to 90 degrees
+    
+    # Thumb joints (2 joints)
+    thumb_metacarpal: [0.0, 1.57]    # 0 to 90 degrees
+    thumb_interphalangeal: [0.0, 1.57] # 0 to 90 degrees
+
+  # Link lengths (in meters)
+  link_lengths:
+    upper_arm: 0.3
+    forearm: 0.25
+    hand: 0.15
+    finger_metacarpal: 0.04
+    finger_proximal: 0.03
+    finger_distal: 0.025
+    thumb_metacarpal: 0.035
+    thumb_interphalangeal: 0.03
+
+  # Mass properties (in kg)
+  masses:
+    upper_arm: 2.0
+    forearm: 1.5
+    hand: 0.5
+    finger: 0.05
+    thumb: 0.04
+
+# Simulation settings
+simulation:
+  time_step: 0.01
+  gravity: [0.0, 0.0, -9.81]
+  max_velocity: 2.0
+  max_force: 100.0
+
+# Visualization settings
+visualization:
+  window_size: [1200, 800]
+  camera:
+    initial_position: [2.0, 2.0, 1.5]
+    initial_target: [0.0, 0.0, 0.5]
+    fov: 45.0
+    near_plane: 0.1
+    far_plane: 100.0
+  
+  colors:
+    base: [0.3, 0.3, 0.3]
+    upper_arm: [0.8, 0.2, 0.2]
+    forearm: [0.2, 0.8, 0.2]
+    hand: [0.2, 0.2, 0.8]
+    fingers: [0.6, 0.6, 0.2]
+    joints: [1.0, 0.0, 0.0]
+
+# Machine Learning settings
+ml:
+  model_save_path: "models/"
+  training:
+    episodes: 1000
+    max_steps_per_episode: 500
+    learning_rate: 0.0003
+    batch_size: 64
+    buffer_size: 100000
+  
+  nlp:
+    model_name: "distilbert-base-uncased"
+    max_sequence_length: 128
+  
+  rewards:
+    reach_target: 100.0
+    collision_penalty: -50.0
+    smooth_movement: 10.0
+    energy_efficiency: 5.0

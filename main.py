@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Main application for robot arm simulation."""
+"""
+Robot Arm Simulation - Command Line Interface
+
+This is the command line interface for the robot arm simulation.
+For the full desktop GUI experience with 3D visualization and enhanced controls, use:
+    python run_native_gui.py
+
+Or use the --gui flag:
+    python main.py --gui
+"""
 
 import sys
 import os
@@ -13,11 +22,19 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from robot_arm.robot_arm import RobotArm
 from physics.physics_engine import PhysicsEngine
-from visualization.renderer import Renderer
 from ui.control_panel import ControlPanel
 from ml.rl_trainer import RLTrainer
 from ml.nlp_processor import CommandParser
 from core.config import config
+
+# Optional imports for visualization
+try:
+    from visualization.renderer import Renderer
+    RENDERER_AVAILABLE = True
+except ImportError:
+    print("⚠️  3D renderer not available (OpenGL/GLFW not installed)")
+    Renderer = None
+    RENDERER_AVAILABLE = False
 
 
 class RobotSimulation:
@@ -70,7 +87,7 @@ class RobotSimulation:
                 self.physics_engine = None
 
         # Create 3D renderer if requested
-        if self.use_visualization:
+        if self.use_visualization and RENDERER_AVAILABLE:
             print("Initializing 3D visualization...")
             try:
                 import platform
@@ -84,6 +101,10 @@ class RobotSimulation:
             except Exception as e:
                 print(f"Warning: Could not initialize 3D visualization: {e}")
                 self.renderer = None
+        else:
+            if not RENDERER_AVAILABLE:
+                print("3D visualization not available (OpenGL/GLFW not installed)")
+            self.renderer = None
 
         # Create GUI control panel if requested
         if self.use_gui:
@@ -333,7 +354,12 @@ class RobotSimulation:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(description="Robot Arm Simulation")
+    parser = argparse.ArgumentParser(
+        description="Robot Arm Simulation - Command Line Interface",
+        epilog="For the full desktop GUI experience, use: python run_native_gui.py"
+    )
+    parser.add_argument("--gui", action="store_true",
+                       help="Launch native desktop GUI (recommended)")
     parser.add_argument("--no-physics", action="store_true",
                        help="Disable physics simulation")
     parser.add_argument("--no-gui", action="store_true",
@@ -350,6 +376,21 @@ def main():
                        help="Number of training timesteps")
 
     args = parser.parse_args()
+
+    # Check if user wants to launch the native desktop GUI
+    if args.gui:
+        print("🚀 Launching Native Desktop GUI...")
+        try:
+            from run_native_gui import main as gui_main
+            return gui_main()
+        except ImportError:
+            print("❌ Native GUI not available. Install required dependencies:")
+            print("   pip install tkinter  # Usually included with Python")
+            print("   python run_native_gui.py  # Use launcher for automatic setup")
+            return 1
+        except Exception as e:
+            print(f"❌ Failed to launch native GUI: {e}")
+            print("🔄 Falling back to command line interface...")
 
     # Create simulation
     simulation = RobotSimulation(
@@ -373,6 +414,11 @@ def main():
             simulation.train_model(args.train, args.timesteps)
         else:
             # Start interactive simulation
+            print("🤖 Starting Robot Arm Simulation - Command Line Interface")
+            print("💡 For a better experience with 3D visualization and enhanced controls:")
+            print("   python run_native_gui.py")
+            print("   or use: python main.py --gui")
+            print()
             simulation.start_simulation()
 
     except KeyboardInterrupt:

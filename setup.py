@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="robot-arm-simulation",
     version="1.0.0",
-    description="3D Robot Arm Simulation with Machine Learning Integration",
+    description="Native Desktop Robot Arm Simulation with Machine Learning Integration",
     author="Robot Simulation Team",
     packages=find_packages(),
     python_requires=">=3.8",
@@ -28,6 +28,7 @@ setup(
     entry_points={
         "console_scripts": [
             "robot-sim=main:main",
+            "robot-gui=run_native_gui:main",
         ],
     },
     classifiers=[

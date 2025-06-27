@@ -21,13 +21,9 @@ gymnasium>=0.26.0
 opencv-python>=4.6.0
 Pillow>=9.0.0
 
-# GUI and Interface (may have compatibility issues on Apple Silicon)
+# GUI and Interface
 matplotlib>=3.5.0
-
-# Web-based 3D visualization (Apple Silicon compatible)
-flask>=2.2.0
-flask-socketio>=5.3.0
-python-socketio>=5.7.0
+# tkinter is included with Python - no separate installation needed
 
 # Utilities
 pyyaml>=6.0
@@ -35,6 +31,6 @@ tqdm>=4.64.0
 
 # Apple Silicon specific notes:
 # - Install PyBullet via conda: conda install -c conda-forge pybullet
-# - OpenGL visualization may not work (automatically disabled on macOS)
-# - Tkinter GUI may crash (automatically disabled on macOS)
-# - Use command line interface instead
+# - OpenGL 3D visualization may not work (fallback to 2D controls available)
+# - Native desktop GUI provides full functionality with or without 3D visualization
+# - Use: python run_native_gui.py to launch the native desktop interface

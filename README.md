@@ -1,6 +1,6 @@
-# 3D Robot Arm Simulation with Machine Learning
+# Robot Arm Simulation - Native Desktop Application
 
-A comprehensive Python-based 3D robot arm simulation application featuring an anthropomorphic robotic arm with machine learning integration for natural language command processing and reinforcement learning training.
+A comprehensive native Python desktop application for robot arm simulation featuring an anthropomorphic robotic arm with machine learning integration, real-time 3D visualization, and natural language command processing.
 
 ## Features
 
@@ -33,12 +33,13 @@ A comprehensive Python-based 3D robot arm simulation application featuring an an
 - **Collision Detection**: Self-collision and environment collision checking
 - **Modular Architecture**: Independent simulation, ML, and visualization components
 
-### User Interface
-- **3D Web Interface**: Modern browser-based 3D visualization (Apple Silicon optimized)
-- **GUI Control Panel**: Manual joint control sliders
-- **Natural Language Interface**: Text input for commands
-- **Training Controls**: Start/stop/monitor ML training
-- **Real-time Monitoring**: Joint states and system status
+### Native Desktop Interface
+- **Native Python GUI**: Cross-platform desktop application using tkinter
+- **Real-time 3D Visualization**: Optional OpenGL-based 3D rendering with camera controls
+- **Enhanced Joint Controls**: Interactive sliders with real-time feedback and status indicators
+- **Natural Language Interface**: Advanced command processing with history and presets
+- **Comprehensive Status Monitoring**: Real-time joint states, end effector pose, and system metrics
+- **Offline Operation**: No web server required, fully standalone application
 
 ## Installation
 
@@ -51,19 +52,18 @@ A comprehensive Python-based 3D robot arm simulation application featuring an an
 
 ```bash
 # Clone or download the project
-cd robot-simulation
+cd robot-arm-simulation
 
 # Install required packages
 pip install -r requirements.txt
 
-# For 3D web interface (recommended for Apple Silicon):
-python install_3d_deps.py
-
 # Or install manually:
-pip install numpy scipy PyOpenGL PyOpenGL-accelerate glfw moderngl
-pip install pybullet torch transformers stable-baselines3 gymnasium
-pip install opencv-python Pillow pyyaml tqdm matplotlib
-pip install flask flask-socketio python-socketio
+pip install numpy scipy matplotlib
+pip install torch transformers stable-baselines3 gymnasium
+pip install opencv-python Pillow pyyaml tqdm
+
+# Optional: For 3D visualization (may not work on all systems)
+pip install PyOpenGL PyOpenGL-accelerate glfw
 ```
 
 ### Alternative Installation
@@ -78,28 +78,27 @@ For optimal performance on Apple Silicon Macs:
 # Use the provided setup script
 ./setup_apple_silicon.sh
 
-# Or manually with conda + uv:
+# Or manually with conda:
 conda create -n robot-sim -c conda-forge python=3.11 pybullet
 conda activate robot-sim
-uv pip install -r requirements.txt
-python install_3d_deps.py
+conda install numpy scipy matplotlib pytorch transformers -c pytorch
+pip install stable-baselines3 gymnasium opencv-python Pillow pyyaml tqdm
 ```
 
 ## Quick Start
 
-### 1. 3D Web Interface (Recommended)
+### 1. Native Desktop GUI (Recommended)
 ```bash
-# Start the modern 3D web interface
-python run_3d_gui.py
+# Launch the native desktop application with compatibility checks
+python run_native_gui.py
 
 # Or run directly:
-python web_3d_interface.py
+python native_desktop_gui.py
 ```
-Then open your browser to: http://localhost:5000
 
-### 2. Traditional GUI (Desktop)
+### 2. Command Line Interface
 ```bash
-# Start the full simulation with GUI
+# Start the full simulation with command line interface
 python main.py
 
 # Start without physics simulation
@@ -138,48 +137,53 @@ python main.py --train TD3 --timesteps 200000
 
 ## Usage Guide
 
-### 3D Web Interface
+### Native Desktop GUI
 
-The modern web-based interface provides the best experience, especially on Apple Silicon Macs:
+The native desktop application provides the best experience with full functionality and performance:
 
 #### Features
-- **Real-time 3D Visualization**: Interactive Three.js-based robot rendering
-- **Mouse Controls**: Drag to orbit, scroll to zoom, intuitive camera movement
-- **Live Updates**: Real-time robot state updates via WebSocket
-- **Cross-platform**: Works on any modern browser
-- **Responsive Design**: Adapts to different screen sizes
+- **Real-time 3D Visualization**: Optional OpenGL-based robot rendering with smooth animations
+- **Enhanced Controls**: Native GUI controls with real-time feedback and status indicators
+- **Offline Operation**: No web server required, fully standalone application
+- **Cross-platform**: Works on Windows, macOS, and Linux
+- **Native Integration**: System menus, keyboard shortcuts, and file dialogs
 
 #### Interface Layout
-- **Left Panel**: 3D viewport with interactive robot visualization
-- **Right Panel**: Control interface with tabs for:
-  - Status monitoring
-  - Joint controls with sliders
-  - Natural language command input
-  - Command history and logging
+- **Main Window**: Split-pane layout with control panel and status monitoring
+- **Control Panel**: Tabbed interface with:
+  - Joint control sliders with real-time position vs target feedback
+  - Natural language command input with history and presets
+- **Status Panel**: Comprehensive monitoring with:
+  - End effector pose (position and orientation)
+  - System status and performance metrics
+  - Joint status summary with color-coded indicators
+- **3D Visualization Window**: Optional separate window for 3D robot visualization
 
-#### 3D Viewport Controls
+#### 3D Visualization Controls (if available)
 - **Left Mouse + Drag**: Orbit camera around robot
+- **Right Mouse + Drag**: Pan camera view
 - **Mouse Wheel**: Zoom in/out
-- **Auto-rotation**: Optional automatic camera rotation
+- **Keyboard Shortcuts**: G (grid), F (frames), J (joints), W (workspace)
 
-### Traditional GUI Control Panel
+### Desktop GUI Control Panel
 
-The application provides a tabbed interface with three main sections:
+The application provides a comprehensive tabbed interface:
 
 #### 1. Joint Control Tab
-- Manual control sliders for each joint
-- Real-time joint position display
-- Reset to home position button
-- Joint limit indicators
+- **Enhanced Joint Sliders**: Control each joint with real-time position vs target indicators
+- **Status Indicators**: Color-coded joint limit warnings and movement status
+- **Velocity and Force Display**: Real-time joint velocity and force feedback
+- **Quick Controls**: Reset all joints, stop all movements, individual joint controls
 
 #### 2. Commands Tab
-- Text input for natural language commands
-- Command history display
-- Execution status feedback
-- Supported commands:
+- **Natural Language Input**: Advanced command processing with confidence scoring
+- **Predefined Commands**: Quick action buttons for common gestures and movements
+- **Command History**: Complete history with execution status and timing
+- **Real-time Feedback**: Success/failure indicators with detailed error messages
+- **Supported Commands**:
   - Movement: "move forward", "go up", "reach position X,Y,Z"
-  - Gestures: "wave", "point at target"
-  - Control: "stop", "reset", "home position"
+  - Gestures: "wave hello", "point up", "stretch arms"
+  - Control: "stop", "reset to home", "relax"
 
 #### 3. Training Tab
 - Algorithm selection (PPO, SAC, TD3)
@@ -259,11 +263,16 @@ robot-simulation/
 ├── ml/                    # Machine learning components
 │   ├── nlp_processor.py   # Natural language processing
 │   └── rl_trainer.py      # Reinforcement learning
-├── ui/                    # User interface
-│   └── control_panel.py   # GUI control panel
+├── ui/                    # Native desktop user interface
+│   ├── enhanced_control_panel.py  # Enhanced joint and command controls
+│   ├── robot_status_panel.py      # Comprehensive status monitoring
+│   └── visualization_window.py    # 3D visualization window
 ├── config/                # Configuration files
 │   └── robot_config.yaml  # Robot configuration
-└── main.py               # Main application
+├── native_desktop_gui.py    # Main native desktop application
+├── run_native_gui.py         # Safe launcher with compatibility checks
+├── test_native_gui.py        # Test suite for native GUI
+└── main.py                   # Command line interface
 ```
 
 ### Key Classes
@@ -329,15 +338,45 @@ self.joints['new_joint'] = Joint(
 
 ### Common Issues
 
-1. **OpenGL Errors**: Ensure graphics drivers are up to date
-2. **PyBullet Import Error**: Install with `pip install pybullet`
-3. **GLFW Window Creation Failed**: Install GLFW system libraries
-4. **Transformer Model Download**: Requires internet connection on first run
+1. **Native GUI Won't Start**:
+   - Check Python version (requires 3.8+)
+   - Install tkinter: `sudo apt-get install python3-tk` (Linux)
+   - Use launcher: `python run_native_gui.py` for automatic checks
+
+2. **3D Visualization Not Working**:
+   - Install OpenGL: `pip install PyOpenGL PyOpenGL-accelerate glfw`
+   - Update graphics drivers
+   - Application continues with 2D controls if 3D fails
+
+3. **macOS Compatibility Issues**:
+   - ✅ **Apple Silicon (M1/M2/M3)**: Fully supported with automatic tkinter compatibility fixes
+   - ✅ **GUI Compatibility**: Automatic detection and graceful fallback for unsupported color options
+   - ✅ **No more tkinter errors**: Fixed "-bg" option errors on newer macOS versions
+   - Use compatibility mode (launcher detects automatically)
+   - Some OpenGL features may not work on Apple Silicon
+   - Application provides fallback options
+
+4. **PyBullet Import Error**: Install with `pip install pybullet`
+5. **Transformer Model Download**: Requires internet connection on first run
+
+### Alternative Interfaces
+
+If the native GUI cannot start, use these alternatives:
+```bash
+# Command line interface with demo
+python main.py --demo
+
+# Single command execution
+python main.py --command "wave hello"
+
+# Basic functionality test
+python test_native_gui.py
+```
 
 ### Performance Optimization
 
 - Use `--no-physics` for faster simulation
-- Reduce visualization quality in config
+- Disable 3D visualization if not needed
 - Use GPU acceleration for ML training
 - Adjust simulation timestep in config
 
